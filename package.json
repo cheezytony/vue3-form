@@ -1,0 +1,40 @@
+{
+  "name": "vue3-form",
+  "version": "1.0.0",
+  "description": "A form validation plugin for vue 3 and/or composition api",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "tsc --noEmit false",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheezytony/vue3-form.git"
+  },
+  "keywords": [
+    "vue",
+    "vue 3",
+    "composition api",
+    "vue form",
+    "vue3 form",
+    "composition api form",
+    "form validation",
+    "vue form validation",
+    "vue3 form validation",
+    "composition api form validation"
+  ],
+  "author": "Antonio Okoro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cheezytony/vue3-form/issues"
+  },
+  "homepage": "https://github.com/cheezytony/vue3-form#readme",
+  "devDependencies": {
+    "@babel/types": "^7.15.6",
+    "typescript": "^4.4.4",
+    "vue": "^3.2.20"
+  }
+}
