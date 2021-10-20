@@ -1,6 +1,6 @@
 {
   "name": "vue3-form",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A form validation plugin for vue 3 and/or composition api",
   "main": "index.js",
   "directories": {
