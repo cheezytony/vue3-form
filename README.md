@@ -18,7 +18,7 @@ npm install vue3-form
     <p>{{ form.fields.email.errors.email }}</p>
     <!-- OR -->
     <p>
-      {{ getFieldErrors(form.fields.email).join(', ') }}
+      {{ getFieldError(form.fields.email).join(', ') }}
     </p>
 
 
@@ -29,11 +29,11 @@ npm install vue3-form
     <p>{{ form.fields.password.errors.stringMin }}</p>
     <!-- OR -->
     <p>
-      {{ getFieldErrors(form.fields.password, 'stringMax') }}
+      {{ getFieldError(form.fields.password, 'stringMax') }}
     </p>
     <!-- OR -->
     <p>
-      {{ getFieldErrors(form.fields.password).join(', ') }}
+      {{ getFieldError(form.fields.password).join(', ') }}
     </p>
 
     <button type="submit">
@@ -44,7 +44,7 @@ npm install vue3-form
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getFieldErrors, getRawFormData, useForm, validateForm } from 'vue3-form';
+import { getFieldError, getRawFormData, useForm, validateForm } from 'vue3-form';
 
 export default defineComponent({
   setup() {
@@ -75,7 +75,7 @@ export default defineComponent({
       const fields = getRawFormData(form);
     }
     
-    return { form, getFieldErrors, submit };
+    return { form, getFieldError, submit };
   },
 });
 </script>
@@ -123,7 +123,7 @@ Updates the states and properties of the form.
 #### setFormErrors
 Updates the errors of the fields in the form.
 
-#### getFieldErrors
+#### getFieldError
 Returns either a single error or all errors of the field specified.
 
 #### validateField
