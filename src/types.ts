@@ -64,13 +64,13 @@ export type ServerErrors = Record<string, string[]>;
 export type ValidationCallback = (status: boolean) => void;
 
 export interface FormField {
-  rules?: [RuleName | Rule];
+  rules?: (RuleName | Rule)[];
   value?: FormInputValue;
 }
 
 export interface FormFieldNormalized {
   name: string;
-  rules: [RuleName | Rule];
+  rules: (RuleName | Rule)[];
   value: FormInputValue;
   errors: Record<string, string> | null;
   serverErrors: string[] | null;
