@@ -4,12 +4,12 @@ export declare type FormPropertyKey = 'error' | 'loading' | 'success' | 'touched
 export declare type ServerErrors = Record<string, string[]>;
 export declare type ValidationCallback = (status: boolean) => void;
 export interface FormField {
-    rules?: [RuleName | Rule];
+    rules?: (RuleName | Rule)[];
     value?: FormInputValue;
 }
 export interface FormFieldNormalized {
     name: string;
-    rules: [RuleName | Rule];
+    rules: (RuleName | Rule)[];
     value: FormInputValue;
     errors: Record<string, string> | null;
     serverErrors: string[] | null;
