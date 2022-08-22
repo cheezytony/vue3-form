@@ -138,7 +138,7 @@ export const ruleHub: Record<string, Rule> = {
   phone: {
     test: ({ value }) =>
       !!value?.toString().match(/^(\+|)(234|0)(7|8|9)(0|1)\d{8}$/),
-    message: () => 'the field has to be a valid nigerian address number.',
+    message: () => 'the field has to be a valid nigerian phone number.',
   },
   required: {
     test: ({ value }) => !!value,
