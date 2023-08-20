@@ -10,10 +10,7 @@
     "build": "tsc",
     "test": "test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cheezytony/vue3-form.git"
-  },
+  "repository": "https://github.com/cheezytony/vue3-form",
   "keywords": [
     "vue",
     "vue 3",
@@ -28,6 +25,9 @@
   ],
   "author": "Antonio Okoro",
   "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "bugs": {
     "url": "https://github.com/cheezytony/vue3-form/issues"
   },
