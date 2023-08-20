@@ -405,7 +405,8 @@ export const useForm = <TKey extends string>(
   const form = ref(generateForm<TKey>(fields, extra));
 
   for (const name in form.value.fields) {
-    const field = form.value.fields[name] as FormFieldNormalized;
+    const field = form.value.fields[name] as unknown as FormFieldNormalized;
+    
     watch(
       () => field.value,
       () => validateField(field, form as Ref<Form>)

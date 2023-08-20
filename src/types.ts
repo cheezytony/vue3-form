@@ -1,4 +1,4 @@
-export type FormInputValue = unknown;
+export type FormInputValue = Array<unknown> | string | number | boolean | FileList | null;
 
 export type RuleName =
   | 'alphabets'
