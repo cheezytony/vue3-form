@@ -1,6 +1,6 @@
 {
-  "name": "vue3-form",
-  "version": "1.2.3",
+  "name": "@cheezytony/vue3-form",
+  "version": "1.0.0",
   "description": "A form validation plugin for vue 3 and/or composition api",
   "main": "lib/index.js",
   "directories": {
@@ -8,9 +8,19 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "test"
+    "test": "test",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint --fix . --ext .ts",
+    "prepublishOnly": "npm run lint:fix",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
+    "release": "bumpp package.json --commit --push --tag"
   },
-  "repository": "https://github.com/cheezytony/vue3-form",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheezytony/vue3-form.git"
+  },
   "keywords": [
     "vue",
     "vue 3",
@@ -26,15 +36,27 @@
   "author": "Antonio Okoro",
   "license": "MIT",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com/@cheezytony"
   },
   "bugs": {
     "url": "https://github.com/cheezytony/vue3-form/issues"
   },
   "homepage": "https://github.com/cheezytony/vue3-form#readme",
+  "files": [
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
   "devDependencies": {
     "@babel/types": "^7.15.6",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "eslint-plugin-vue": "^9.17.0",
     "typescript": "^4.4.4",
     "vue": "^3.2.20"
+  },
+  "dependencies": {
+    "bumpp": "^9.2.0"
   }
 }
