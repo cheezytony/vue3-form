@@ -352,7 +352,7 @@ export const validateField = <TFormRef extends Ref<Form>>(
         }
         break;
       }
-      case 'function': {
+      case 'object': {
         const { test, message } = key as Rule;
         if (!test(field, [], form.value)) {
           field.errors = field.errors || {};
@@ -361,9 +361,6 @@ export const validateField = <TFormRef extends Ref<Form>>(
         }
         break;
       }
-    }
-    if (typeof key === 'function') {
-      return;
     }
   });
 
