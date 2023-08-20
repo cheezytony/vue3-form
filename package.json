@@ -35,9 +35,6 @@
   ],
   "author": "Antonio Okoro",
   "license": "MIT",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@cheezytony"
-  },
   "bugs": {
     "url": "https://github.com/cheezytony/vue3-form/issues"
   },
