@@ -53,6 +53,10 @@ export const ruleHub: Record<string, Rule> = {
     test: ({ value }) => !!value?.toString().match(/^[A-Z]+$/),
     message: () => 'this field must contain only uppercase letters.',
   },
+  array: {
+    test: ({ value }) => Array.isArray(value),
+    message: () => 'this field has to be an array.',
+  },
   arrayContains: {
     test: ({ value }, array) => array.indexOf(value as string) > -1,
     message: (name, array) =>
@@ -63,9 +67,26 @@ export const ruleHub: Record<string, Rule> = {
     message: (name, array) =>
       `this field cannot contain any of these ${array.join(', ')}.`,
   },
+  boolean: {
+    test: ({ value }) => typeof value === 'boolean',
+    message: () => 'this field has to be a boolean.',
+  },
   date: {
-    test: ({ value }) => value?.constructor === Date,
+    test: ({ value }) =>
+      !!value && value?.constructor === Date || !!Date.parse(value as string),
     message: () => 'this field.',
+  },
+  different: {
+    test: ({ value }, [fieldName], form) => {
+      const field = form.fields[fieldName];
+      if (!field) {
+        throw new Error(`Field ${fieldName} not found in form fields.`);
+      }
+
+      return !!value && value !== field.value;
+    },
+    message: (field, [fieldName]) =>
+      `this field should be the different from the ${fieldName} field.`,
   },
   email: {
     test: ({ value }) =>
@@ -88,9 +109,32 @@ export const ruleHub: Record<string, Rule> = {
     message: (field, [fieldName]) =>
       `this field should be the same as the ${fieldName} field.`,
   },
+  false: {
+    test: ({ value }) => value === false,
+    message: () => 'this field has to be false.',
+  },
   file: {
     test: ({ value }) => value?.constructor === File,
     message: () => 'a file has to be chosen for this field.',
+  },
+  files: {
+    test: ({ value }) => value?.constructor === FileList,
+    message: () => 'this field should contain at least one file.',
+  },
+  filesLength: {
+    test: ({ value }, [length]) => (value as FileList).length === Number(length),
+    message: (field, [length]) =>
+      `this field should contain exactly ${length} files.`,
+  },
+  filesMax: {
+    test: ({ value }, [max]) => (value as FileList).length <= Number(max),
+    message: (field, [max]) =>
+      `this field should contain less than ${max} files.`,
+  },
+  filesMin: {
+    test: ({ value }, [min]) => (value as FileList).length >= Number(min),
+    message: (field, [min]) =>
+      `this field should contain at least ${min} files.`,
   },
   money: {
     test: ({ value }) => !!value?.toString().match(/^\d+(\.\d{1,2})?$/),
@@ -98,7 +142,7 @@ export const ruleHub: Record<string, Rule> = {
   },
   name: {
     test: ({ value }) => !!value?.toString().match(/\w{2}(\s\w{2})+/),
-    message: () => 'this field has to be a valid full address name.',
+    message: () => 'this field has to be a valid full name.',
   },
   noSequence: {
     test: ({ value }) =>
@@ -111,7 +155,7 @@ export const ruleHub: Record<string, Rule> = {
   },
   numberBetween: {
     test: ({ value }, [start, end]) =>
-      Number(value) > Number(start) && Number(value) < Number(end),
+      Number(value) >= Number(start) && Number(value) <= Number(end),
     message: (field, [start, end]) =>
       `this field must be between ${start} and ${end}.`,
   },
@@ -169,6 +213,10 @@ export const ruleHub: Record<string, Rule> = {
     message: (field, [min]) =>
       `this field has to contain at least ${min} characters.`,
   },
+  true: {
+    test: ({ value }) => value === true,
+    message: () => 'this field has to be true.',
+  },
   url: {
     test: ({ value }) =>
       !!value
@@ -180,14 +228,14 @@ export const ruleHub: Record<string, Rule> = {
   },
 };
 
-const generateForm = (
-  keys: Record<string, FormField>,
+const generateForm = <TKey extends string>(
+  keys: Record<TKey, FormField>,
   extra: Record<string, unknown> = {}
-): Form => {
-  const fields: Record<string, FormFieldNormalized> = {};
-  Object.keys(keys).forEach((name) => {
+): Form<TKey> => {
+  const fields = {} as Record<TKey, FormFieldNormalized>;
+  for (const name in keys) {
     const param = keys[name];
-    const value = (typeof param === 'object' && param.value) || '';
+    const value = typeof param === 'object' && param.value;
     const field: FormFieldNormalized = reactive({
       name,
       value: value !== undefined ? value : '',
@@ -196,7 +244,7 @@ const generateForm = (
       serverErrors: null,
     });
     fields[name] = field;
-  });
+  }
 
   return {
     fields,
@@ -213,8 +261,13 @@ const generateForm = (
   };
 };
 
-export const getFields = (form: Ref<Form>): FormFieldNormalized[] =>
-  Object.keys(form.value.fields).map((name) => form.value.fields[name]);
+export const getFields = <TKey extends string>(
+  form: Ref<Form<TKey>>
+): FormFieldNormalized[] => {
+  return Object.keys(form.value.fields).map(
+    (name) => form.value.fields[name as TKey]
+  );
+};
 
 export const getFormData = (form: Ref<Form>): FormData => {
   const formData = new FormData();
@@ -231,14 +284,16 @@ export const getFormData = (form: Ref<Form>): FormData => {
   return formData;
 };
 
-export const getRawFormData = (form: Ref<Form>): Record<string, unknown> => {
-  const data: Record<string, unknown> = {};
+export const getRawFormData = <TKeys extends string>(
+  form: Ref<Form<TKeys>>
+): Record<TKeys, unknown> => {
+  const data = {} as Record<TKeys, unknown>;
   const {
     value: { fields },
   } = form;
-  Object.keys(fields).forEach((name) => {
+  for (const name in fields) {
     data[name] = fields[name].value;
-  });
+  }
   return data;
 };
 
@@ -274,9 +329,9 @@ export const getFieldError = (
     .concat(serverErrors || []);
 };
 
-export const validateField = (
+export const validateField = <TFormRef extends Ref<Form>>(
   field: FormFieldNormalized,
-  form: Ref<Form>
+  form: TFormRef
 ): boolean => {
   const { rules } = field;
   let isValid = true;
@@ -343,19 +398,19 @@ export const resetForm = (form: Ref<Form>): void => {
   form.value = generateForm(keys, extra);
 };
 
-export const useForm = (
-  fields: Record<string, FormField>,
+export const useForm = <TKey extends string>(
+  fields: Record<TKey, FormField>,
   extra: Record<string, unknown> = {}
-): Ref<Form> => {
-  const form = ref(generateForm(fields, extra));
+) => {
+  const form = ref(generateForm<TKey>(fields, extra));
 
-  Object.keys(fields).forEach((name) => {
-    const field = form.value.fields[name];
+  for (const name in form.value.fields) {
+    const field = form.value.fields[name] as FormFieldNormalized;
     watch(
       () => field.value,
-      () => validateField(field, form)
+      () => validateField(field, form as Ref<Form>)
     );
-  });
+  }
 
   return form;
 };

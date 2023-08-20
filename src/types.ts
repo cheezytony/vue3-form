@@ -1,4 +1,4 @@
-export type FormInputValue = string | number | boolean | null;
+export type FormInputValue = unknown;
 
 export type RuleName =
   | 'alphabets'
@@ -7,10 +7,12 @@ export type RuleName =
   | 'alphabetsOnly'
   | 'alphabetsUppercase'
   | 'alphabetsUppercaseOnly'
+  | 'array'
   | 'arrayContains'
   | `arrayContains:${string}`
   | 'arrayDoesntContain'
   | `arrayDoesntContain:${string}`
+  | 'boolean'
   | 'date'
   | 'dateAfter'
   | `dateAfter:${string}`
@@ -22,24 +24,30 @@ export type RuleName =
   | `dateExact:${string}`
   | 'dateFormat'
   | `dateFormat:${string}`
+  | 'different'
   | 'email'
   | 'exact'
   | `exact:${string}`
+  | 'false'
   | 'file'
+  | 'files'
+  | 'filesLength'
+  | 'filesMax'
+  | 'filesMin'
   | 'money'
   | 'name'
   | 'noSequence'
   | 'nullable'
-  | 'numbers'
-  | 'numbersOnly'
   | 'numberBetween'
-  | `numberBetween:${number}:${number}`
+  | `numberBetween:${number},${number}`
   | 'numberExact'
   | `numberExact:${number}`
-  | 'numberMin'
-  | `numberMin:${number}`
   | 'numberMax'
   | `numberMax:${number}`
+  | 'numberMin'
+  | `numberMin:${number}`
+  | 'numbers'
+  | 'numbersOnly'
   | 'phone'
   | 'required'
   | 'specialCharacters'
@@ -50,6 +58,7 @@ export type RuleName =
   | `stringMax:${number}`
   | 'stringMin'
   | `stringMin:${number}`
+  | 'true'
   | 'url';
 
 export type FormPropertyKey =
@@ -84,21 +93,21 @@ export interface FormProperties {
   valid?: boolean;
 }
 
-export interface Form {
-  fields: Record<string, FormFieldNormalized>;
+export interface Form<TKey extends string = string> {
+  fields: Record<TKey, FormFieldNormalized>;
   error: string | null;
   success: string | null;
   loading: boolean;
   touched: boolean;
   valid: boolean;
   __base: {
-    keys: Record<string, FormField>;
+    keys: Record<TKey, FormField>;
     extra: Record<string, unknown>;
   };
 }
 
-export interface Rule {
-  test: (field: FormFieldNormalized, args: string[], form: Form) => boolean;
-  message: (field: FormFieldNormalized, args: string[], form: Form) => string;
+export interface Rule<TForm extends Form = Form> {
+  test: (field: FormFieldNormalized, args: string[], form: TForm) => boolean;
+  message: (field: FormFieldNormalized, args: string[], form: TForm) => string;
   props?: Record<string, string | number>;
 }
