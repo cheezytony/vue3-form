@@ -278,7 +278,7 @@ export const getFormData = (form: Ref<Form>): FormData => {
     const { value } = fields[name];
     formData.append(
       name,
-      value === null || value === undefined ? '' : value.toString()
+      value === null || value === undefined ? '' : value as (string | Blob)
     );
   });
   return formData;
